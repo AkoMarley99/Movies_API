@@ -58,5 +58,63 @@ def add_movie():
     return jsonify(movie_schema.dump(new_record))
 
 
+# Get  endpoint for all records
+
+@app.route('/movie/get' , methods=["GET"])
+def get_all_movies():
+    all_records = db.session.query(Movie).all()
+    return jsonify(multi_movie_schema.dump(all_records))
+
+#get endpoint forsingle endpoint    
+
+@app.route('/movie/get/<id>' , methods=["GET"])
+def get_movie_by_id(id):
+    one_movie = db.session.query(Movie).filter(Movie.id == id).first()
+    return jsonify(movie_schema.dump(one_movie))
+
+#put endpoint to update a record 
+
+@app.route('/movie/update/<id>' , methods=["PUT"])
+def update_movie_by_id(id):
+    if request.content_type != 'application/json':
+        return jsonify('Error: Data must be sent as JSON')
+
+    
+    put_data = request.get_json()
+    title = put_data.get('title')
+    genre = put_data.get('genre')
+    mpaa_rating = put_data.get('mpaa_rating')
+    poster_image = put_data.get('poster_image')
+    
+
+    movie_to_update = db.session.query(Movie).filter(Movie.id == id).first()
+
+    if title != None:
+        movie_to_update.title = title
+    if genre!= None:
+        movie_to_update.genre = genre
+    if mpaa_rating != None:
+        movie_to_update.mpaa_rating = mpaa_rating
+    if poster_image != None:
+        movie_to_update.poster_image = poster_image
+
+
+    db.session.commit()
+
+    return jsonify(movie_schema.dump(movie_to_update))
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
