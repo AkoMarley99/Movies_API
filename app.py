@@ -27,23 +27,32 @@ class Movie(db.Model):
         self.poster_image = poster_image
         self.all_reviews = all_reviews
 
+
+
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     star_rating = db.Column(db.Float, nullable=False)
-    review_text = db.Column(db.Text, length=288 )
+    review_text = db.Column(db.Text(288))
     movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"), nullable=False)
 
     def __init__(self, start_rating, review_text):
         self.star_rating = star_rating
         self.review_text = review_text
 
+
+
 class ReviewSchema(ma.Schema):
     class Meta:
         fields = ('id', 'star_rating', 'review_text', 'movie_id')
+review_schema = ReviewSchema
+multi_review_schema = ReviewSchema(many=True)
+
+
 
 class MovieSchema(ma.Schema):
     class Meta:
         fields = ('id', 'title', 'genre', 'mpaa_rating', 'poster_image')
+    all_reviews = ma.Nested(multi_review_schema)
 
 movie_schema = MovieSchema()
 multi_movie_schema = MovieSchema(many=True)
@@ -140,3 +149,8 @@ def delete_movie_by_id(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+#git add .
+#git commit -m ""
