@@ -18,13 +18,28 @@ class Movie(db.Model):
     genre = db.Column(db.String, nullable=False)
     mpaa_rating = db.Column(db.String)
     poster_image = db.Column(db.String, unique=True)
+    all_reviews = db.relationship("Review", backref='movie', cascade= "all, delete, delete-orphan")
 
     def __init__(self, title, genre, mpaa_rating, poster_image):
         self.title = title
         self.genre = genre
         self.mpaa_rating = mpaa_rating
         self.poster_image = poster_image
+        self.all_reviews = all_reviews
 
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    star_rating = db.Column(db.Float, nullable=False)
+    review_text = db.Column(db.Text, length=288 )
+    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"), nullable=False)
+
+    def __init__(self, start_rating, review_text):
+        self.star_rating = star_rating
+        self.review_text = review_text
+
+class ReviewSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'star_rating', 'review_text', 'movie_id')
 
 class MovieSchema(ma.Schema):
     class Meta:
@@ -45,6 +60,7 @@ def add_movie():
     genre = post_data.get('genre')
     mpaa_rating = post_data.get('mpaa_rating')
     poster_image = post_data.get('poster_image')
+
 
     if title == None:
         return jsonify("Error: You must provide a 'title' key")
