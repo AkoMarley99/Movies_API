@@ -3,16 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 
-import os
+
 
 app = Flask(__name__)
-CORS(app)
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "app.sqlite")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://ejornemdvgfhhu:1662bf847b4af5b1a90da9a62ece868db048e8f96dcd309e5c8ddd47fa607b35@ec2-44-198-214-172.compute-1.amazonaws.com:5432/d9s7fnu55q7evq"
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-
+CORS(app)
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
